@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title #{title}
+    link(rel='stylesheet', href='style.css')
+
+  body
+    h1 #{title}
+
+    if data.length > 0
+      each item in data
+        p
+          | S No: #{item.s_no}, USER: #{item.user}, Hobbies: #{item.hobbies}, Location: #{item.location}
+    else
+      p No results found for the given ID.
+
+  script(src='/javascripts/script.js')

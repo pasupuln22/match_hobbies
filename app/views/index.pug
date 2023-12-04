@@ -38,7 +38,7 @@ html
       tbody
       tbody
         each item in data
-          tr
+          tr(onclick=`openTemplate('${item.s_no}')`)
             td= item.s_no
             td= item.user
             td= item.hobbies
@@ -61,4 +61,10 @@ script.
         rows[i].style.display = 'none';
       }
     }
+  }
+
+  function openTemplate(sNo) {
+    // Add code to navigate to a new page or template using the sNo parameter
+    window.location.href = `/details/${sNo}`;
+    //- console.log(`Opening template for S No: ${sNo}`);
   }

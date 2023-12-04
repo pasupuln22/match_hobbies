@@ -26,6 +26,21 @@ app.get("/", function (req, res) {
         });
 });
 
+app.get("/details/:id", function (req, res) {
+    const s_no = req.params.id;
+    const sql = `SELECT * FROM interests WHERE s_no = ${s_no}`;
+
+    db.query(sql)
+        .then(results => {
+            res.render('details', { title: 'Interests', data: results });
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        });
+});
+
+
 // Start server on port 3000
 app.listen(3000, function () {
     console.log(`Server running at http://127.0.0.1:3000/`);
