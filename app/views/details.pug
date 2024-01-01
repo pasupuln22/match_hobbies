@@ -1,0 +1,45 @@
+include header
+
+style.
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+  }
+
+  .card {
+    background-color: #86c9d5;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  p.no-results {
+    font-weight: bold;
+    color: red;
+  }
+  
+block content
+
+  .card
+    h1 Data Display
+    if data.length > 0
+      each item in data
+        p
+          | S No: #{item.s_no}, USER: #{item.user}, Hobbies: #{item.hobbies}, Location: #{item.location}
+    else
+      p.no-results No results found for the given ID.
