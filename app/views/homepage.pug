@@ -1,0 +1,66 @@
+include header
+
+block content
+  .search-container
+    select(id='hobbiesDropdown')
+      option(value='all') All Hobbies
+      option(value='reading') Reading
+      option(value='writing') Writing
+      option(value='drawing') Drawing
+      option(value='music') Music
+      option(value='sports') Sports
+      option(value='cooking') Cooking
+      option(value='traveling') Traveling
+      option(value='gaming') Gaming
+      option(value='programming') Programming
+    input(type='text', id='searchInput', placeholder='Search by User...')
+    button(onclick='filterTable()')
+      i(class='fa fa-search')
+
+  table#dataTable
+    thead
+      tr
+        th S No
+        th USER
+        th Hobbies
+        th Location
+    tbody
+    tbody
+      each item in data
+        tr(onclick=`openTemplate('${item.s_no}')`)
+          td= item.s_no
+          td= item.user
+          td= item.hobbies
+          td= item.location
+
+  script.
+    function filterTable() {
+      var dropdown = document.getElementById('hobbiesDropdown');
+      var selectedHobby = dropdown.value.toLowerCase();
+
+      var input = document.getElementById('searchInput');
+      var searchTerm = input.value.toLowerCase();
+
+      var table = document.getElementById('dataTable');
+      var rows = table.getElementsByTagName('tr');
+
+      for (var i = 1; i < rows.length; i++) {
+        var currentHobby = rows[i].getElementsByTagName('td')[2].innerText.toLowerCase();
+        var currentUser = rows[i].getElementsByTagName('td')[1].innerText.toLowerCase();
+
+        var hobbyMatch = selectedHobby === 'all' || currentHobby === selectedHobby;
+        var searchMatch = currentUser.includes(searchTerm);
+
+        if (hobbyMatch && searchMatch) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    }
+
+    function openTemplate(sNo) {
+      // Add code to navigate to a new page or template using the sNo parameter
+      window.location.href = `/details/${sNo}`;
+      //- console.log(`Opening template for S No: ${sNo}`);
+    }
