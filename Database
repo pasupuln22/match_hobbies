@@ -1,0 +1,96 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jan 02, 2024 at 09:37 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `match hobbies`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hobbies`
+--
+
+CREATE TABLE `hobbies` (
+  `HobbyID` int(11) NOT NULL,
+  `Hobbytype` varchar(35) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `hobbies`
+--
+
+INSERT INTO `hobbies` (`HobbyID`, `Hobbytype`) VALUES
+(9007, 'Tennis'),
+(9001, 'Chess'),
+(7001, 'Football'),
+(6543, 'Badminton'),
+(2445, 'Jogging'),
+(5346, 'Bowling');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `UserID` int(11) NOT NULL,
+  `Name` varchar(35) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`UserID`, `Name`) VALUES
+(4567, 'Jack Jones'),
+(7876, 'Ben Johnson'),
+(8665, 'Liam Walker'),
+(3456, 'James Reeves'),
+(4321, 'Sarah Page'),
+(5454, 'Lucy Smith');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_hobby`
+--
+
+CREATE TABLE `user_hobby` (
+  `HobbyID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `user_hobby`
+--
+
+INSERT INTO `user_hobby` (`HobbyID`, `UserID`) VALUES
+(9007, 4567),
+(9001, 7876),
+(7001, 8665),
+(6543, 3456),
+(2445, 4321),
+(5346, 5454);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
