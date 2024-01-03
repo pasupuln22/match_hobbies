@@ -2,9 +2,10 @@
 const express = require("express");
 const session = require("express-session");
 const { User } = require("./models/user");
+const { Hobby } = require("./models/hobbies");
 
 // Create express app
-var app = express();
+const app = express();
 
 // Add static files location
 app.use(express.static("static"));
@@ -51,12 +52,81 @@ app.get("/", function(req, res) {
     res.end();
 });
 
+// Create a route for hobbies API
+app.get("/api/hobbies/:userId", async function (req, res) {
+    const userId = req.params.userId;
+
+    try {
+        const userHobbies = await Hobby.getHobbiesByUser(userId);
+        res.json(userHobbies);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+app.get("/details/:hobbyId", async function (req, res) {
+    const hobbyId = req.params.hobbyId;
+    try {
+        const hobby = await Hobby.getHobbyById(hobbyId);
+        console.log(hobby); // Add this line to check the retrieved data
+        res.render('details', { data: hobby , loggedIn: req.session.loggedIn, currentPage: 'home'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post("/api/hobbies/:userId", async function (req, res) {
+    const userId = req.params.userId;
+    const { hobbies, location, datetime } = req.body;
+
+    try {
+        const newHobby = new Hobby(userId, hobbies, location, datetime);
+        await newHobby.createHobby();
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.put("/api/hobbies/:hobbyId", async function (req, res) {
+    const hobbyId = req.params.hobbyId;
+    const { hobbies, location, datetime } = req.body;
+
+    try {
+        const hobbyToUpdate = new Hobby(null, hobbies, location, datetime);
+        hobbyToUpdate.id = hobbyId;
+        await hobbyToUpdate.updateHobby();
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.delete("/api/hobbies/:hobbyId", async function (req, res) {
+    const hobbyId = req.params.hobbyId;
+
+    try {
+        await Hobby.deleteHobby(hobbyId);
+        res.json({ success: true });
+        res.render('details', { title: 'hobbies', data: results, loggedIn: req.session.loggedIn });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 app.get("/home", function (req, res) {
-    const sql = 'SELECT * FROM interests';
+    const sql = 'SELECT * FROM hobbies';
 
     db.query(sql)
         .then(results => {
-            res.render('homepage', { title: 'Interests', data: results, loggedIn: req.session.loggedIn, currentPage: 'home' });
+            res.render('homepage', { title: 'hobbies', data: results, loggedIn: req.session.loggedIn, currentPage: 'home' });
         })
         .catch(error => {
             console.error(error);
@@ -89,19 +159,6 @@ app.post('/set-password', async function (req, res) {
     }
 });
 
-app.get("/details/:id", function (req, res) {
-    const s_no = req.params.id;
-    const sql = `SELECT * FROM interests WHERE s_no = ${s_no}`;
-
-    db.query(sql)
-        .then(results => {
-            res.render('details', { title: 'Interests', data: results, loggedIn: req.session.loggedIn });
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        });
-});
 
 // Check submitted email and password pair
 app.post('/authenticate', async function (req, res) {
