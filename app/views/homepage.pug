@@ -27,8 +27,8 @@ block content
     tbody
     tbody
       each item in data
-        tr(onclick=`openTemplate('${item.s_no}')`)
-          td= item.s_no
+        tr(onclick=`openTemplate('${item.id}')`)
+          td= item.id
           td= item.user
           td= item.hobbies
           td= item.location
