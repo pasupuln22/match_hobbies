@@ -41,36 +41,62 @@ app.get('/login', function (req, res) {
 });
 
 
-// Create a route for root - /
-app.get("/", function(req, res) {
-    if (req.session.uid) {   
-        res.send('Welcome back, ' + req.session.uid + '!');
-    } else {
-        // res.send('Please login to view this page!');
-        res.render('login', { loggedIn: req.session.loggedIn });
-    }
-    res.end();
-});
 
-// Create a route for hobbies API
-app.get("/hobbies/:userId", async function (req, res) {
-    const userId = req.params.userId;
-
+app.get('/create-hobby', async function (req, res) {
+    const userId = req.session.uid;
+    const sql = 'SELECT * FROM all_hobbies';
     try {
-        const userHobbies = await Hobby.getHobbiesByUser(userId);
-        res.json(userHobbies);
+        const hobbies = await db.query(sql);
+        res.render('create-hobby', { userId, hobbies,currentPage: 'create-hobby' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+app.get('/edit-hobby/:id', async function (req, res) {
+    hobbyId = req.params.id;
+    const sql = 'SELECT * FROM all_hobbies';
+    try {
+        const hobbies = await db.query(sql);
+        res.render('edit-hobby',{ hobbyId ,hobbies, loggedIn: req.session.loggedIn, currentPage: 'own-hobby'})
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
+    
+});
+
+
+// Create a route for root - /
+app.get("/", function(req, res) {
+    if (req.session.uid) {   
+        res.send('Welcome back, ' + req.session.uid + '!');
+    } else {
+        res.render('login', { loggedIn: req.session.loggedIn });
+    }
+    res.end();
+});
+
+// Create a route for hobbies API
+app.get("/own-hobby", async function (req, res) {
+    const createdBy = req.session.uid;
+
+    try {
+        const userHobbies = await Hobby.getHobbiesByUser(createdBy);
+        res.render('own-hobby', { data: userHobbies , loggedIn: req.session.loggedIn, currentPage: 'own-hobby'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.get("/details/:hobbyId", async function (req, res) {
     const hobbyId = req.params.hobbyId;
     try {
         const hobby = await Hobby.getHobbyById(hobbyId);
-        console.log(hobby); // Add this line to check the retrieved data
+        console.log(hobby);
         res.render('details', { data: hobby , loggedIn: req.session.loggedIn, currentPage: 'home'});
     } catch (error) {
         console.error(error);
@@ -78,51 +104,51 @@ app.get("/details/:hobbyId", async function (req, res) {
     }
 });
 
-app.post("/create-hobby/:userId", async function (req, res) {
-    const userId = req.params.userId;
-    const { hobbies, location, datetime } = req.body;
+app.post("/create-hobby/:createdBy", async function (req, res) {
+    const createdBy = req.params.createdBy;
+    const { hobbies, location } = req.body;
 
     try {
-        const newHobby = new Hobby(userId, hobbies, location, datetime);
+        const newHobby = new Hobby(hobbies, location, createdBy);
         await newHobby.createHobby();
-        res.json({ success: true });
+        res.render('create-hobby', { userId: createdBy, successMessage: 'Hobby created successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.render('create-hobby', { userId: createdBy, errorMessage: 'Internal Server Error' });
     }
 });
 
-app.put("/hobbies/:hobbyId", async function (req, res) {
+// Update Hobby route
+app.post("/update-hobby/:hobbyId", async function (req, res) {
     const hobbyId = req.params.hobbyId;
-    const { hobbies, location, datetime } = req.body;
+    const { hobbies, location } = req.body;
 
     try {
-        const hobbyToUpdate = new Hobby(null, hobbies, location, datetime);
+        const hobbyToUpdate = new Hobby(hobbies, location, null);
         hobbyToUpdate.id = hobbyId;
         await hobbyToUpdate.updateHobby();
-        res.json({ success: true });
+        res.render('edit-hobby', { successMessage: `Hobby ${hobbyId} updated successfully`, hobbyId });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.render('edit-hobby', { errorMessage: 'Internal Server Error', hobbyId });
     }
 });
 
-app.delete("/hobbies/:hobbyId", async function (req, res) {
-    const hobbyId = req.params.hobbyId;
 
+app.get("/delete-hobby/:hobbyId", async function (req, res) {
+    const hobbyId = req.params.hobbyId;
     try {
         await Hobby.deleteHobby(hobbyId);
-        res.json({ success: true });
-        res.render('details', { title: 'hobbies', data: results, loggedIn: req.session.loggedIn });
+        // res.json({ success: true });
+        res.render('edit-hobby', { successMessage: `Hobby ${hobbyId} deleted successfully`, hobbyId , loggedIn: req.session.loggedIn, currentPage: 'own-hobby'});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.render('edit-hobby', { errorMessage: 'Internal Server Error', hobbyId });
     }
 });
 
-
 app.get("/home", function (req, res) {
-    const sql = 'SELECT * FROM hobbies';
+    const sql = 'SELECT hobbies.*,Users.email as user FROM hobbies,Users WHERE hobbies.created_by = Users.id;';
     const sql1 = 'SELECT * FROM all_hobbies';
 
     Promise.all([db.query(sql), db.query(sql1)])
@@ -136,40 +162,35 @@ app.get("/home", function (req, res) {
 });
 
 app.post('/set-password', async function (req, res) {
-    params = req.body;
-    var user = new User(params.email);
+    const params = req.body; // Declare as const
+    const user = new User(params.email);
 
     try {
-        uId = await user.getIdFromEmail();
+        const uId = await user.getIdFromEmail();
         if (uId) {
-            // If a valid, existing user is found, set the password
             await user.setUserPassword(params.password);
             console.log(req.session.id);
-            // Render the same page with success message
             res.render('register', { successMessage: 'Password set successfully', loggedIn: req.session.loggedIn });
         } else {
-            // If no existing user is found, add a new one
-            newId = await user.addUser(params.email);
-            // Render the same page with success message
+            const newId = await user.addUser(params.email);
             res.render('register', { successMessage: 'Account created successfully', loggedIn: req.session.loggedIn });
         }
     } catch (err) {
         console.error(`Error while setting password `, err.message);
-        // Render the same page with error message
         res.render('register', { errorMessage: 'An error occurred while setting the password', loggedIn: req.session.loggedIn });
     }
 });
 
-
 // Check submitted email and password pair
 app.post('/authenticate', async function (req, res) {
-    params = req.body;
-    var user = new User(params.email);
+    const params = req.body; // Declare as const
+    const user = new User(params.email);
+    
     try {
-        uId = await user.getIdFromEmail();
+        const uId = await user.getIdFromEmail();
         if (uId) {
-            match = await user.authenticate(params.password);
-            console.log(match)
+            const match = await user.authenticate(params.password);
+            console.log(match);
             if (match) {
                 req.session.uid = uId;
                 req.session.loggedIn = true;
@@ -179,7 +200,7 @@ app.post('/authenticate', async function (req, res) {
                 res.render('login', { errorMessage: 'Invalid password' });
             }
         } else {
-            res.send('invalid email');
+            res.send('Invalid email');
         }
     } catch (err) {
         console.error(`Error while comparing `, err.message);
@@ -191,9 +212,6 @@ app.get('/logout', function (req, res) {
     req.session.destroy();
     res.redirect('/login');
 });
-
-
-
 
 // Start server on port 3000
 app.listen(3000, function () {

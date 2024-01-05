@@ -159,11 +159,9 @@ html
         span MATCH INTERESTS
       .header-right
         a(href='/home', class=currentPage === 'home' ? 'active' : '') Home
-        // Check if the user is logged in
         if loggedIn
-          // Show "Logout" if logged in
+          a(href='/create-hobby', class=currentPage === 'create-hobby' ? 'active' : '') Create
+          a(href='/own-hobby', class=currentPage === 'own-hobby' ? 'active' : '') Own
           a(href='/logout') Logout
         else
-          // Show "Login" if not logged in
-          // Highlight "Login" link if the current page is the login page
           a(href='/login', class=currentPage === 'login' ? 'active' : '') Login

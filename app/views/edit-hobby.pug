@@ -51,6 +51,16 @@ style.
     background-color: #555;
   }
 
+  .delete-btn {
+    background-color: red;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .delete-btn:hover {
+    background-color: #ff5555;
+  }
+
   p.success,
   p.error {
     margin-top: 15px;
@@ -75,19 +85,19 @@ style.
   a:hover {
     color: #0056b3;
   }
-  
+
 block content
   .card
-    h1 Create Hobby
-    form(action=`/update-hobby/${hid}` method='POST')
+    h1 Update Hobby
+    form(action=`/update-hobby/${hobbyId}` method='POST')
       label(for='hobbies') Select your hobby:
       select(name='hobbies', style='color: black;', onchange='logSelectedValue(this)')
         if hobbies
           each hobby in hobbies
-            option(value=hobby.hobby_name)= hobby.hobby_name
+            option(value=hobby.hobby_name, selected=hobby.hobby_name === selectedHobby)= hobby.hobby_name
       label(for='location') Enter your location:
-      input(name='location')
-      input(type='submit' value='Submit')
+      input(name='location' value=selectedLocation)
+      input(type='submit' value='Update')
 
       // Success message
       if successMessage
@@ -97,8 +107,10 @@ block content
       if errorMessage
         p.error= errorMessage
 
+    a(href=`/delete-hobby/${hobbyId}`, class='delete-btn') Delete
   script.
     function logSelectedValue(selectElement) {
       var selectedValue = selectElement.options[selectElement.selectedIndex].value;
       console.log('Selected Hobby:', selectedValue);
     }
+    

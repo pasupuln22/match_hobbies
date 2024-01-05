@@ -5,50 +5,47 @@ class Hobby {
   // Id of the hobby
   id;
 
-  // User associated with the hobby
-  user;
-
   // Hobby details
   hobbies;
 
   // Location of the hobby
   location;
 
-  // Datetime of the hobby
-  datetime;
+  // Created by
+  created_by;
 
-  constructor(user, hobbies, location, datetime) {
-    this.user = user;
+  constructor(hobbies, location, created_by) {
     this.hobbies = hobbies;
     this.location = location;
-    this.datetime = datetime;
+    this.created_by = created_by;
   }
 
   // Create a new hobby
   async createHobby() {
-    let sql = "INSERT INTO hobbies (user, hobbies, location, datetime) VALUES (?, ?, ?, ?)";
-    const result = await db.query(sql, [this.user, this.hobbies, this.location, this.datetime]);
+    let sql = "INSERT INTO hobbies (hobbies, location, created_by) VALUES (?, ?, ?)";
+    const result = await db.query(sql, [this.hobbies, this.location, this.created_by]);
     this.id = result.insertId;
     return true;
   }
 
   // Read hobbies for a user
   static async getHobbiesByUser(userId) {
-    let sql = "SELECT * FROM hobbies WHERE user = ?";
+    let sql = "SELECT * FROM hobbies WHERE created_by = ?";
     const results = await db.query(sql, [userId]);
     return results;
   }
-   // Read hobbies for a user
-   static async getHobbyById(hobbyId) {
-    let sql = "SELECT * FROM hobbies WHERE id = ?";
+
+  // Read a hobby by ID
+  static async getHobbyById(hobbyId) {
+    let sql = "SELECT hobbies.*,Users.email as user FROM hobbies,Users WHERE hobbies.id = ? and hobbies.created_by = Users.id";
     const results = await db.query(sql, [hobbyId]);
     return results;
   }
 
   // Update a hobby
   async updateHobby() {
-    let sql = "UPDATE hobbies SET hobbies = ?, location = ?, datetime = ? WHERE id = ?";
-    await db.query(sql, [this.hobbies, this.location, this.datetime, this.id]);
+    let sql = "UPDATE hobbies SET hobbies = ?, location = ? WHERE id = ?";
+    await db.query(sql, [this.hobbies, this.location, this.id]);
     return true;
   }
 

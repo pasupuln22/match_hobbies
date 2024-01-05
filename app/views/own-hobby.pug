@@ -1,0 +1,19 @@
+include header
+
+block content
+  table#dataTable
+    thead
+      tr
+        th S No
+        th Hobbies
+        th Location
+    tbody
+      each item in data
+        tr(onclick=`openTemplate('${item.id}')`)
+          td= item.id
+          td= item.hobbies
+          td= item.location
+  script.
+    function openTemplate(sNo) {
+      window.location.href = `/edit-hobby/${sNo}`;
+    }
