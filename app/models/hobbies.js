@@ -14,6 +14,8 @@ class Hobby {
   // Created by
   created_by;
 
+  likedBy = [];
+  
   constructor(hobbies, location, created_by) {
     this.hobbies = hobbies;
     this.location = location;

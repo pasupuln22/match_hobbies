@@ -47,7 +47,7 @@ app.get('/create-hobby', async function (req, res) {
     const sql = 'SELECT * FROM all_hobbies';
     try {
         const hobbies = await db.query(sql);
-        res.render('create-hobby', { userId, hobbies,currentPage: 'create-hobby' });
+        res.render('create-hobby', { userId, loggedIn: req.session.loggedIn, hobbies,currentPage: 'create-hobby' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -111,10 +111,10 @@ app.post("/create-hobby/:createdBy", async function (req, res) {
     try {
         const newHobby = new Hobby(hobbies, location, createdBy);
         await newHobby.createHobby();
-        res.render('create-hobby', { userId: createdBy, successMessage: 'Hobby created successfully' });
+        res.render('create-hobby', { userId: createdBy,oggedIn: req.session.loggedIn, successMessage: 'Hobby created successfully' });
     } catch (error) {
         console.error(error);
-        res.render('create-hobby', { userId: createdBy, errorMessage: 'Internal Server Error' });
+        res.render('create-hobby', { userId: createdBy,oggedIn: req.session.loggedIn, errorMessage: 'Internal Server Error' });
     }
 });
 
@@ -127,10 +127,10 @@ app.post("/update-hobby/:hobbyId", async function (req, res) {
         const hobbyToUpdate = new Hobby(hobbies, location, null);
         hobbyToUpdate.id = hobbyId;
         await hobbyToUpdate.updateHobby();
-        res.render('edit-hobby', { successMessage: `Hobby ${hobbyId} updated successfully`, hobbyId });
+        res.render('edit-hobby', { successMessage: `Hobby ${hobbyId} updated successfully`,oggedIn: req.session.loggedIn, hobbyId });
     } catch (error) {
         console.error(error);
-        res.render('edit-hobby', { errorMessage: 'Internal Server Error', hobbyId });
+        res.render('edit-hobby', { errorMessage: 'Internal Server Error',oggedIn: req.session.loggedIn, hobbyId });
     }
 });
 
@@ -143,7 +143,7 @@ app.get("/delete-hobby/:hobbyId", async function (req, res) {
         res.render('edit-hobby', { successMessage: `Hobby ${hobbyId} deleted successfully`, hobbyId , loggedIn: req.session.loggedIn, currentPage: 'own-hobby'});
     } catch (error) {
         console.error(error);
-        res.render('edit-hobby', { errorMessage: 'Internal Server Error', hobbyId });
+        res.render('edit-hobby', { errorMessage: 'Internal Server Error', loggedIn: req.session.loggedIn, hobbyId });
     }
 });
 
