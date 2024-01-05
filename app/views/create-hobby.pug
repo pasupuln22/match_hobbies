@@ -1,0 +1,96 @@
+include header
+
+style.
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+  }
+
+  .card {
+    background-color: #86c9d5;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #555;
+  }
+
+  p.success,
+  p.error {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .success {
+    color: green;
+  }
+
+  .error {
+    color: red;
+  }
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: #0056b3;
+  }
+  
+block content
+  .card
+    h1 Create Hobby
+    form(action=`/create-hobby/${userId}` method='POST')
+      label(for='hobbies') Enter your hobbies:
+      input(name='hobbies')
+      label(for='location') Enter your location:
+      input(name='location')
+      label(for='datetime') Enter the datetime:
+      input(name='datetime' type='datetime-local')
+      input(type='submit' value='Submit')
+      // Success message
+      if successMessage
+        p.success= successMessage
+
+      // Error message
+      if errorMessage
+        p.error= errorMessage
