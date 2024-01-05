@@ -4,15 +4,8 @@ block content
   .search-container
     select(id='hobbiesDropdown')
       option(value='all') All Hobbies
-      option(value='reading') Reading
-      option(value='writing') Writing
-      option(value='drawing') Drawing
-      option(value='music') Music
-      option(value='sports') Sports
-      option(value='cooking') Cooking
-      option(value='traveling') Traveling
-      option(value='gaming') Gaming
-      option(value='programming') Programming
+      each hobby in data1
+        option(value=`${hobby.hobby_name.toLowerCase()}`)= hobby.hobby_name
     input(type='text', id='searchInput', placeholder='Search by User...')
     button(onclick='filterTable()')
       i(class='fa fa-search')
@@ -24,7 +17,6 @@ block content
         th USER
         th Hobbies
         th Location
-    tbody
     tbody
       each item in data
         tr(onclick=`openTemplate('${item.id}')`)
@@ -60,7 +52,5 @@ block content
     }
 
     function openTemplate(sNo) {
-      // Add code to navigate to a new page or template using the sNo parameter
       window.location.href = `/details/${sNo}`;
-      //- console.log(`Opening template for S No: ${sNo}`);
     }

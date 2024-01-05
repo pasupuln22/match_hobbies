@@ -53,7 +53,7 @@ app.get("/", function(req, res) {
 });
 
 // Create a route for hobbies API
-app.get("/api/hobbies/:userId", async function (req, res) {
+app.get("/hobbies/:userId", async function (req, res) {
     const userId = req.params.userId;
 
     try {
@@ -78,7 +78,7 @@ app.get("/details/:hobbyId", async function (req, res) {
     }
 });
 
-app.post("/api/hobbies/:userId", async function (req, res) {
+app.post("/create-hobby/:userId", async function (req, res) {
     const userId = req.params.userId;
     const { hobbies, location, datetime } = req.body;
 
@@ -92,7 +92,7 @@ app.post("/api/hobbies/:userId", async function (req, res) {
     }
 });
 
-app.put("/api/hobbies/:hobbyId", async function (req, res) {
+app.put("/hobbies/:hobbyId", async function (req, res) {
     const hobbyId = req.params.hobbyId;
     const { hobbies, location, datetime } = req.body;
 
@@ -107,7 +107,7 @@ app.put("/api/hobbies/:hobbyId", async function (req, res) {
     }
 });
 
-app.delete("/api/hobbies/:hobbyId", async function (req, res) {
+app.delete("/hobbies/:hobbyId", async function (req, res) {
     const hobbyId = req.params.hobbyId;
 
     try {
@@ -123,10 +123,11 @@ app.delete("/api/hobbies/:hobbyId", async function (req, res) {
 
 app.get("/home", function (req, res) {
     const sql = 'SELECT * FROM hobbies';
+    const sql1 = 'SELECT * FROM all_hobbies';
 
-    db.query(sql)
-        .then(results => {
-            res.render('homepage', { title: 'hobbies', data: results, loggedIn: req.session.loggedIn, currentPage: 'home' });
+    Promise.all([db.query(sql), db.query(sql1)])
+        .then(([result, result1]) => {
+            res.render('homepage', { title: 'hobbies', data: result, data1: result1, loggedIn: req.session.loggedIn, currentPage: 'home' });
         })
         .catch(error => {
             console.error(error);
@@ -190,6 +191,9 @@ app.get('/logout', function (req, res) {
     req.session.destroy();
     res.redirect('/login');
 });
+
+
+
 
 // Start server on port 3000
 app.listen(3000, function () {

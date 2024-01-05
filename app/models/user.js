@@ -43,7 +43,7 @@ class User {
         const result = await db.query(sql, [this.email, pw]);
         console.log(result.insertId);
         this.id = result.insertId;
-        return true;
+        return this.id;
     }
 
     // Test a submitted password against a stored password
