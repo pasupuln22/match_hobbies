@@ -1,0 +1,57 @@
+include header
+style.
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start; /* Align content to the left */
+    align-items: center;
+    height: 60vh;
+  }
+
+  .card-container {
+    max-width: 80%; /* Set a maximum width for flexibility */
+    margin-left: 20px; /* Add margin for spacing */
+  }
+
+  .card {
+    background-color: #86c9d5;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  h1 {
+    color: #333;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 10px;
+    color: black;
+    text-align: left; /* Align text to the left */
+  }
+
+  .no-results {
+    font-weight: bold;
+    color: red;
+    text-align: center;
+  }
+
+block content
+  .card-container
+    .card
+      h1 User Details
+
+      if data.length > 0
+        each item in data
+          ul
+            li S No: #{item.id}
+            li USER: #{item.email}
+      else
+        p.no-results No results found for the given ID.

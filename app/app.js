@@ -40,6 +40,21 @@ app.get('/login', function (req, res) {
     res.render('login', { loggedIn: req.session.loggedIn, currentPage: 'login' });
 });
 
+// profile route
+app.get('/profile', async function (req, res) {
+    const userId = req.session.uid;
+    const sql = 'SELECT * FROM Users WHERE id = ?';
+    try {
+        const user = await db.query(sql, [userId]);
+        // Assuming that user[0] contains the user data, adjust accordingly if needed
+        res.render('profile', { data: user, loggedIn: req.session.loggedIn, currentPage: 'profile' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 
 
 app.get('/create-hobby', async function (req, res) {
@@ -64,8 +79,6 @@ app.get('/edit-hobby/:id', async function (req, res) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-    
-    
 });
 
 

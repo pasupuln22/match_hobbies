@@ -162,6 +162,7 @@ html
         if loggedIn
           a(href='/create-hobby', class=currentPage === 'create-hobby' ? 'active' : '') Create
           a(href='/own-hobby', class=currentPage === 'own-hobby' ? 'active' : '') Own
+          a(href='/profile', class=currentPage === 'profile' ? 'active' : '') Profile
           a(href='/logout') Logout
         else
           a(href='/login', class=currentPage === 'login' ? 'active' : '') Login
